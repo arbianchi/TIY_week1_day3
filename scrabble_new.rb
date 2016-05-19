@@ -1,9 +1,7 @@
 require "pry"
 
 
-points = {"A"=>1, "B"=>3, "C"=>3, "D"=>2, "E"=>1, "F"=>4, "G"=>2, "H"=>4, "I"=>1, "J"=>8,
-  "K"=>5, "L"=>1, "M"=>3, "N"=>1, "O"=>1, "P"=>3, "Q"=>10, "R"=>1, "S"=>1, "T"=>1,
-  "U"=>1, "V"=>4, "W"=>4, "X"=>8, "Y"=>4, "Z"=>10}
+points = {"A"=>1, "B"=>3, "C"=>3, "D"=>2, "E"=>1, "F"=>4, "G"=>2, "H"=>4, "I"=>1, "J"=>8,"K"=>5, "L"=>1, "M"=>3, "N"=>1, "O"=>1, "P"=>3, "Q"=>10, "R"=>1, "S"=>1, "T"=>1,"U"=>1, "V"=>4, "W"=>4, "X"=>8, "Y"=>4, "Z"=>10}
 
 
   player1 = {"Score" => 0, "Total" => 0, "Max" => 0}
@@ -19,31 +17,27 @@ points = {"A"=>1, "B"=>3, "C"=>3, "D"=>2, "E"=>1, "F"=>4, "G"=>2, "H"=>4, "I"=>1
     return dict
   end
 
-
   def update_score word, player, points
     player["Score"] = 0
     word.each do |letter|
       player["Score"] += points[letter]
     end
-    puts "#{player}'s score is #{player["Score"]}"
     return player["Score"]
   end
 
   def update_total score, player
     player["Total"] += score
-    puts "#{player}'s total is #{player["Total"]}"
     return player["Total"]
   end
 
   def update_max score, player
     if score > player["Max"]
       player["Max"] = score
-      puts "#{player}'s max is #{player["Max"]}"
       return player["Max"]
     end
   end
 
-  def writeto_scorecard scorecard
+  def writeto_scorecard scorecard, player1, player2
     open(scorecard, 'w') { |f|
       f << "Player1's total is #{player1["Total"]}\n"
       f << "Player1's max is #{player1["Max"]}\n"
@@ -56,7 +50,7 @@ points = {"A"=>1, "B"=>3, "C"=>3, "D"=>2, "E"=>1, "F"=>4, "G"=>2, "H"=>4, "I"=>1
 
   until endgame == true
 
-    print "Enter word: \n"
+    print "Enter word or 'game over': \n"
 
     word = gets.chomp.upcase.split ""
 
@@ -64,19 +58,26 @@ points = {"A"=>1, "B"=>3, "C"=>3, "D"=>2, "E"=>1, "F"=>4, "G"=>2, "H"=>4, "I"=>1
     puts
     if word.join == "GAME OVER"
       endgame = true
-    elsif dict.include? word && (turn == "player1")
+    elsif dict.include?(word) && (turn == "player1")
       score = update_score word,player1,points
       total1 = update_total score, player1
       max1 = update_max score, player1
+      puts "Player1's total is #{score}"
+      puts "Player1's max is #{max1}"
+      puts "Player1's total is #{total1}"
       turn = "player2"
-    elsif dict.include? word && (turn == "player2")
+    elsif dict.include?(word) && (turn == "player2")
       score = update_score word,player2,points
-      total1 = update_total score, player2
-      max1 = update_max score, player2
+      total2 = update_total score, player2
+      max2 = update_max score, player2
+      puts "Player2's score is #{score}"
+      puts "Player2's max is #{max2}"
+      puts "Player2's total is #{total2}"
       turn = "player1"
     else
       print "Invalid entry. "
     end
+    # binding.pry
   end
 
-  writeto_scorecard "scorecard.txt"
+  writeto_scorecard "scorecard.txt", player1, player2
